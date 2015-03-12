@@ -1,9 +1,4 @@
-function showMyScriptDb() {
-  return publicStuffDb();
-}
-function publicStuffDb() {
-  return ScriptDb.getMyDb();
-}
+
 function showMyScriptAppResource(s) {
   try {
     return ScriptApp.getResource(s);
