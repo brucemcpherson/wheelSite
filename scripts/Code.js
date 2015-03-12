@@ -26,7 +26,7 @@ function getDefaultE() {
                            excel: "excel,xl",
                            gas: "gas,apps\\sscript,scriptdb,spreadsheetapp",
                            authentication:"digest,oauth2?,auth,authentication,credentials?,password",
-                           database:"dbase,database,sql,parse,datastore,fusion,orchestrate,drive",
+                           database:"dbase,database,sql,parse,datastore,fusion,orchestrate,drive,dbabstraction,scratch,driver?",
                            async:"trigger,async,promises?,deferred,asynchronous",
                            library:"library,project,share",
                            drive:"drive",
@@ -40,7 +40,10 @@ function getDefaultE() {
                            json: "json",
                            classes: "class,classes",
                            cdataset: "cdataset,data\\sabstraction,data\\smanipulation\\sclasses",
-                           cjobject: "cjobject"
+                           cjobject: "cjobject",
+                           gadget: "gadget?",
+                           html: "html?",
+                           addons: "add?,sidebar?"
                        }};
 }
 
@@ -56,12 +59,13 @@ function initBlogger(e,source) {
 
 function getApiKey(api) {
   // my private store
-  var myKey = mcpher.getMyStuff(api, myStuff.myStuffDb());
+  var myKey = myStuff.getMyStuff(api, myStuff.myStuffDb());
+  Logger.log(myKey);
   if (myKey.status.code == "good") {
-    return myKey.result.myStuff;
+    return myKey.result;
   }
   else {
-    mcpher.MsgBox("unable to find your key for " + api);
+    throw ("unable to find your key for " + api);
     return null;
   }
 }
