@@ -152,6 +152,9 @@ function doGet(e) {
   if ( eArgs.parameters.tagoutput == "drive" && ! results.error ) { 
     var jString = JSON.stringify(writeToGdrive ( eArgs.parameters.tagfile ||  eArgs.parameters.source +"adwheel.json" , jString));
   }
+  if ( eArgs.parameters.tagoutput == "gcs" && ! results.error ) { 
+    var jString = JSON.stringify(writeToGcs ( eArgs.parameters.tagfile ||  eArgs.parameters.source +"adwheel.json" , jString));
+  }
   // this is either file data or json results
   return ContentService.createTextOutput ( eArgs.parameters.callback ? 
                         eArgs.parameters.callback + "(" + jString + ");" : jString ) 
@@ -200,6 +203,53 @@ function getTextFromNode(x) {
     case 'XmlElement': return x.getNodes().map(getTextFromNode).join('');
     default: return '';
   }
+}
+function writeToGcs (name , data ) {
+  
+  // first get auth
+    // set up gcs 
+  var bucket = 'xliberation.com';
+  var packageName = 'xliberation-store';
+  var result;
+  
+  // this consumes up the Oauth2 authentication that was set up once off
+  var goa = cGoa.make (packageName,PropertiesService.getScriptProperties());
+  
+  // you can get the project id & accessToken from goa
+  var accessToken = goa.getToken();
+  
+  // create a new store manager - we'll be writing to xliberation.com/dump
+  var handle = new cGcsStore.GcsStore()
+  .setAccessToken (accessToken)
+  .setBucket(bucket)
+  .setFolderKey("dump");
+  
+  
+  var result = { 
+    data: [] , 
+    file : { 
+      url: 'thepublicurl' , 
+      name: name , 
+      id: 'some id', 
+      download: 'the download url',
+      hosted: "the download url"
+    } 
+  };
+  
+  // write the data
+  try {
+    handle
+    .put (name , data)
+    .patchPredefinedAcl (name , "publicRead");
+    // all of these are the same for gcs.
+    result.url = result.id = result.download = result.hosted = handle.getSelfLink(name);
+  }
+  catch(err) {
+    Logger.log(err);
+  }
+
+  return result || { error : 'complete gdrive screw up', file: { name:name}};
+  
 }
 // write it to google drive
 function writeToGdrive( name , json ) {
