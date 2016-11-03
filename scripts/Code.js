@@ -18,32 +18,33 @@ function timed(scope) {
 function getDefaultE() {
    return {parameters:{ tagdomain: 'mcpher.com',
                         tagsite: 'share', 
-                        tagoutput :'drive',
+                        tagoutput :'gcs',
                         tagfile: 'wheel.json',
                         wheelLevels:3, 
-                           d3: "d3,d3js,d3\.js",
+                           d3: "d3",
                            vba: "vba,vb,visual basic",
-                           excel: "excel,xl",
-                           gas: "gas,apps\\sscript,scriptdb,spreadsheetapp",
-                           authentication:"digest,oauth2?,auth,authentication,credentials?,password",
-                           database:"dbase,database,sql,parse,datastore,fusion,orchestrate,drive,dbabstraction,scratch,driver?",
-                           async:"trigger,async,promises?,deferred,asynchronous",
+                           excel: "excel,xl,workbook",
+                           gas: "gas,apps script,scriptdb,spreadsheetapp,documentapp,formapp",
+                           authentication:"digest,oauth2?,auth,credential,password",
+                           database:"dbase,database,sql,parse,datastore,fusion,orchestrate,drive,dbabstraction,scratch,driver",
+                           async:"async,promise,deferred,asynchronous",
                            library:"library,project,share",
                            drive:"drive",
-                           javascript: "js,javascript,function,jquery",
-                           parse: "parse,parse.com",
+                           javascript: "js,javascript,jquery",
+                           parse: "parse",
                            geo: "maps,earth,geocode",
-                           vizualization: "viz,vi[sz]uali[sz]ations?",
-                           snippets: "tips?,snippets?,oneliners?,one\\sliners?",
-                           colors: "colors?,heatmaps?",
-                           charts: "charts?",
+                           vizualization: "vi[sz]\\w?",
+                           snippets: "tip,snippet,one\s?liner",
+                           colors: "color,heatmap",
+                           charts: "chart",
                            json: "json",
-                           classes: "class,classes",
-                           cdataset: "cdataset,data\\sabstraction,data\\smanipulation\\sclasses",
+                           classes: "class",
+                           cdataset: "cdataset,data abstraction,data manipulation",
                            cjobject: "cjobject",
-                           gadget: "gadget?",
-                           html: "html?",
-                           addons: "add?,sidebar?"
+                           gadget: "gadget",
+                           html: "html",
+                           addons: "add-?ons,sidebar,dialog",
+                           apis:"api,gcs,bigquery,books,sheets,plus,people,maps,execution api,gplus"
                        }};
 }
 
@@ -60,7 +61,6 @@ function initBlogger(e,source) {
 function getApiKey(api) {
   // my private store
   var myKey = myStuff.getMyStuff(api, myStuff.myStuffDb());
-  Logger.log(myKey);
   if (myKey.status.code == "good") {
     return myKey.result;
   }
@@ -319,7 +319,7 @@ function addCounts(tags,body) {
 
   for (var i=0; i < tags.tagmap.length ; i ++ ) {
     for (var j=0;j<tags.tagmap[i].values.length;j++) {
-        var matches = body.match (new RegExp("\\b"+tags.tagmap[i].values[j]+"\\b", "ig"));
+        var matches = body.replace(/\s/g,"\\s").match (new RegExp("\\b"+tags.tagmap[i].values[j]+"s?\\b", "igm"));
         tags.tagmap[i].counts[j] = matches ? matches.length : 0;
     }
   }
